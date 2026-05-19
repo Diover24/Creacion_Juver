@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "996185036559",
+    "project_id": "juver-86077",
+    "storage_bucket": "juver-86077.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:996185036559:android:ed092152fc8cd54eb6507a",
+        "android_client_info": {
+          "package_name": "com.juver"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcvUCa8dpgwXTw8oLHGd8C8nm_dq1JZ_Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
