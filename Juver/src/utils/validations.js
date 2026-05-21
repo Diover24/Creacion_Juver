@@ -1,4 +1,4 @@
-// Validation helper functions for user profile registration
+
 
 /**
  * Checks if a string value is empty, null, or only contains spaces
