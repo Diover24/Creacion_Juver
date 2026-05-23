@@ -1,29 +1,44 @@
-import React from 'react';
-import { View, TextInput, StyleSheet, Text } from 'react-native';
+import React, { useState } from 'react';
+import { View, TextInput, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 const CustomInput = ({
     placeholder,
     value,
     onChangeText,
-    secureTextEntry,
+    isPassword,
     keyboardType,
     autoCapitalize,
     label
 }) => {
+    const [isSecure, setIsSecure] = useState(isPassword);
+
     return (
         <View style={styles.container}>
-            {/* Si le pasamos un label, lo muestra. Si no, lo ignora directamente */}
             {label && <Text style={styles.label}>{label}</Text>}
-            <TextInput
-                style={styles.input}
-                placeholder={placeholder}
-                value={value}
-                onChangeText={onChangeText}
-                secureTextEntry={secureTextEntry}
-                keyboardType={keyboardType}
-                autoCapitalize={autoCapitalize}
-                placeholderTextColor="#999"
-            />
+
+            <View style={styles.inputContainer}>
+                <TextInput
+                    style={styles.input}
+                    placeholder={placeholder}
+                    value={value}
+                    onChangeText={onChangeText}
+                    secureTextEntry={isSecure}
+                    keyboardType={keyboardType}
+                    autoCapitalize={autoCapitalize}
+                    placeholderTextColor="#999"
+                />
+
+                {isPassword && (
+                    <TouchableOpacity
+                        style={styles.toggleButton}
+                        onPress={() => setIsSecure(!isSecure)}
+                    >
+                        <Text style={styles.toggleText}>
+                            {isSecure ? 'Mostrar' : 'Ocultar'}
+                        </Text>
+                    </TouchableOpacity>
+                )}
+            </View>
         </View>
     );
 };
@@ -39,16 +54,29 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#333',
     },
-    input: {
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
         backgroundColor: '#F8F9FA',
         borderWidth: 1,
         borderColor: '#E4E6E8',
         borderRadius: 8,
         paddingHorizontal: 15,
+    },
+    input: {
+        flex: 1,
         paddingVertical: 12,
         fontSize: 16,
         color: '#333',
     },
+    toggleButton: {
+        paddingLeft: 10,
+    },
+    toggleText: {
+        color: '#007BFF',
+        fontWeight: '600',
+        fontSize: 14,
+    }
 });
 
 export default CustomInput;

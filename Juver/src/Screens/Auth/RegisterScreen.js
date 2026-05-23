@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { View, TextInput, Button, Alert, StyleSheet, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Button, Alert, StyleSheet, ScrollView } from 'react-native';
 import { authService, dbService } from '../../services/database';
-import { isEmpty, isValidEmail, isValidNameLength } from '../../utils/validations';
 
-const RegisterScreen = ({navigation}) => {
+import { isEmpty, isValidEmail, isValidNameLength, isValidPhone, isStrongPassword } from '../../utils/validations';
+import CustomInput from '../../components/CustomInput';
+
+const RegisterScreen = ({ navigation }) => {
     const [fullName, setFullName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [gender, setGender] = useState('');
@@ -19,6 +21,7 @@ const RegisterScreen = ({navigation}) => {
         setPassword('');
         setPhoneNumber('');
     };
+
     const handleRegister = async () => {
         if (isEmpty(fullName) || isEmpty(phoneNumber) || isEmpty(email) || isEmpty(password)) {
             Alert.alert('Error', 'Todos los campos son obligatorios. No pueden estar vacíos.');
@@ -32,6 +35,16 @@ const RegisterScreen = ({navigation}) => {
 
         if (!isValidEmail(email)) {
             Alert.alert('Error', 'Por favor, ingresa un correo electrónico válido.');
+            return;
+        }
+
+        if (!isValidPhone(phoneNumber)) {
+            Alert.alert('Error', 'El número de teléfono debe tener exactamente 10 dígitos numéricos.');
+            return;
+        }
+
+        if (!isStrongPassword(password)) {
+            Alert.alert('Error', 'La contraseña debe tener al menos 6 caracteres.');
             return;
         }
 
@@ -55,7 +68,7 @@ const RegisterScreen = ({navigation}) => {
                 [
                     {
                         text: 'OK',
-                        onPress: () => navigation.navigate('home')
+                        onPress: () => navigation.navigate('Home')
                     }
                 ]
             );
@@ -75,12 +88,40 @@ const RegisterScreen = ({navigation}) => {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <TextInput placeholder="Full Name" onChangeText={setFullName} style={styles.input} />
-            <TextInput placeholder="Phone Number" keyboardType="numeric" onChangeText={setPhoneNumber} style={styles.input} />
-            <TextInput placeholder="Gender (e.g., Male/Female/Other)" onChangeText={setGender} style={styles.input} />
-            <TextInput placeholder="Language (English/Spanish)" onChangeText={setLanguage} style={styles.input} />
-            <TextInput placeholder="Email" keyboardType="email-address" autoCapitalize="none" onChangeText={setEmail} style={styles.input} />
-            <TextInput placeholder="Password" secureTextEntry onChangeText={setPassword} style={styles.input} />
+            <CustomInput
+                placeholder="Full Name"
+                value={fullName}
+                onChangeText={setFullName}
+            />
+            <CustomInput
+                placeholder="Phone Number"
+                value={phoneNumber}
+                keyboardType="numeric"
+                onChangeText={setPhoneNumber}
+            />
+            <CustomInput
+                placeholder="Gender (e.g., Male/Female/Other)"
+                value={gender}
+                onChangeText={setGender}
+            />
+            <CustomInput
+                placeholder="Language (English/Spanish)"
+                value={language}
+                onChangeText={setLanguage}
+            />
+            <CustomInput
+                placeholder="Email"
+                value={email}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                onChangeText={setEmail}
+            />
+            <CustomInput
+                placeholder="Password"
+                value={password}
+                isPassword
+                onChangeText={setPassword}
+            />
 
             <Button title="Register" onPress={handleRegister} />
         </ScrollView>
@@ -88,8 +129,12 @@ const RegisterScreen = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-    container: { flexGrow: 1, justifyContent: 'center', padding: 20 },
-    input: { borderWidth: 1, borderColor: '#ccc', marginBottom: 15, padding: 10, borderRadius: 5 }
+    container: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        padding: 20,
+        backgroundColor: '#fff'
+    }
 });
 
 export default RegisterScreen;

@@ -1,4 +1,4 @@
-// src/utils/pricingHelper.js
+
 
 const BASE_FARE = 3500;
 const PRICE_PER_KM = 1200;
