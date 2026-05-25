@@ -23,7 +23,6 @@ const LoginScreen = ({ navigation }) => {
         try {
             await authService.signInWithEmailAndPassword(email, password);
             setPassword('');
-            navigation.navigate('Home');
         } catch (error) {
             if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
                 Alert.alert('Error de Acceso', 'El correo o la contraseña son incorrectos.');

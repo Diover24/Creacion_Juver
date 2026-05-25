@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { calculateTripFare } from '../utils/pricingHelper';
 
 const VEHICLES = [
-    { id: 'economy', name: 'Económico', multiplier: 1.0, icon: '🚗' },
-    { id: 'premium', name: 'Premium', multiplier: 1.8, icon: '✨' },
-    { id: 'moto', name: 'Moto', multiplier: 0.6, icon: '🏍️' },
+    { id: 'economico', name: 'Económico', multiplier: 1.0, icon: 'car-sport' },
+    { id: 'xl', name: 'XL', multiplier: 1.5, icon: 'bus' },
+    { id: 'premium', name: 'Premium', multiplier: 2.0, icon: 'star' },
 ];
 
 const VehicleSelector = ({ distance, duration, onSelect }) => {
@@ -16,20 +17,26 @@ const VehicleSelector = ({ distance, duration, onSelect }) => {
         const basePrice = calculateTripFare(distance, duration);
         const finalPrice = Math.round(basePrice * vehicle.multiplier);
 
-        onSelect({ ...vehicle, price: finalPrice });
+        onSelect({
+            id: vehicle.id,
+            name: vehicle.name,
+            price: finalPrice,
+            multiplier: vehicle.multiplier
+        });
     };
 
     const renderItem = ({ item }) => {
         const isSelected = selectedId === item.id;
         const basePrice = calculateTripFare(distance, duration);
         const price = Math.round(basePrice * item.multiplier);
+        const iconColor = isSelected ? '#2196F3' : '#666';
 
         return (
             <TouchableOpacity
                 style={[styles.card, isSelected && styles.selectedCard]}
                 onPress={() => handleSelect(item)}
             >
-                <Text style={styles.icon}>{item.icon}</Text>
+                <Ionicons name={item.icon} size={32} color={iconColor} style={styles.icon} />
                 <Text style={styles.title}>{item.name}</Text>
                 <Text style={styles.price}>${price.toLocaleString()}</Text>
             </TouchableOpacity>
@@ -59,14 +66,15 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         marginHorizontal: 5,
         alignItems: 'center',
-        width: 100, borderWidth: 2,
+        width: 100,
+        borderWidth: 2,
         borderColor: 'transparent'
     },
     selectedCard: {
         backgroundColor: '#E3F2FD',
         borderColor: '#2196F3'
     },
-    icon: { fontSize: 30, marginBottom: 5 },
+    icon: { marginBottom: 5 },
     title: { fontWeight: 'bold', color: '#333' },
     price: { color: '#666', fontSize: 12, marginTop: 4 },
 });

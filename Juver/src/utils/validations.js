@@ -1,46 +1,75 @@
 /**
- * Checks if a string value is empty, null, or only contains spaces
- * @param {string} value 
- * @returns {boolean} True if empty, false otherwise
+ * Checks if a string value is empty, null, undefined, or only contains spaces.
+ * @param {string} value
+ * @returns {boolean}
  */
 export const isEmpty = (value) => {
-  return !value || value.trim().length === 0;
+  return !value || String(value).trim().length === 0;
 };
 
 /**
- * Validates if an email has a correct format including '@' and a valid domain
- * @param {string} email 
- * @returns {boolean} True if valid, false otherwise
+ * Validates if an email has a correct format including '@' and a valid domain.
+ * @param {string} email
+ * @returns {boolean}
  */
 export const isValidEmail = (email) => {
+  if (isEmpty(email)) return false;
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
+  return emailRegex.test(String(email).trim());
 };
 
 /**
- * Validates that the full name does not exceed the maximum allowed length
- * @param {string} name 
- * @returns {boolean} True if valid, false otherwise
+ * Validates that the full name does not exceed the maximum allowed length.
+ * @param {string} name
+ * @returns {boolean}
  */
 export const isValidNameLength = (name) => {
-  return name.length <= 50;
+  if (isEmpty(name)) return false;
+
+  return String(name).trim().length <= 50;
 };
 
 /**
- * Validates if the phone number contains exactly 10 numeric digits
- * @param {string} phone 
- * @returns {boolean} True if valid, false otherwise
+ * Validates if the phone number contains exactly 10 numeric digits.
+ * @param {string} phone
+ * @returns {boolean}
  */
 export const isValidPhone = (phone) => {
+  if (isEmpty(phone)) return false;
+
   const phoneRegex = /^[0-9]{10}$/;
-  return phoneRegex.test(phone);
+  return phoneRegex.test(String(phone).trim());
 };
 
 /**
- * Validates that the password has at least 6 characters (Firebase minimum requirement)
- * @param {string} password 
- * @returns {boolean} True if valid, false otherwise
+ * Validates that the password has at least 6 characters.
+ * Firebase requires a minimum of 6 characters.
+ * @param {string} password
+ * @returns {boolean}
  */
 export const isStrongPassword = (password) => {
-  return password.length >= 6;
+  if (isEmpty(password)) return false;
+
+  return String(password).length >= 6;
+};
+
+/**
+ * Validates if the selected gender is valid.
+ * @param {string} gender
+ * @returns {boolean}
+ */
+export const isValidGender = (gender) => {
+  const validGenders = ['Masculino', 'Femenino', 'No binario', 'Prefiero no decirlo'];
+  return validGenders.includes(gender);
+};
+
+/**
+ * Validates if the selected language is valid.
+ * @param {string} language
+ * @returns {boolean}
+ */
+export const isValidLanguage = (language) => {
+  const validLanguages = ['Español', 'Inglés'];
+  return validLanguages.includes(language);
 };

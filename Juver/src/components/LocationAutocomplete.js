@@ -3,32 +3,46 @@ import { StyleSheet, View } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { GOOGLE_API_KEY } from '../utils/constants';
 
-const LocationAutocomplete = ({ onSelect, placeholder, top = 40, defaultValue = "" }) => {
-    const googlePlacesRef = useRef();
+const LocationAutocomplete = ({
+    onSelect,
+    placeholder,
+    top = 40,
+    defaultValue = '',
+    selectedLocation = null,
+}) => {
+    const googlePlacesRef = useRef(null);
 
     useEffect(() => {
-        if (defaultValue) {
-            googlePlacesRef.current?.setAddressText(defaultValue);
+        if (!googlePlacesRef.current) return;
+
+        if (!selectedLocation) {
+            googlePlacesRef.current.setAddressText(defaultValue || '');
         }
-    }, [defaultValue]);
+    }, [selectedLocation, defaultValue]);
 
     return (
-        <View style={[styles.container, { top: top }]}>
+        <View style={[styles.container, { top }]}>
             <GooglePlacesAutocomplete
+                key={placeholder}
                 ref={googlePlacesRef}
                 placeholder={placeholder}
                 minLength={2}
                 autoFocus={false}
-                returnKeyType={'search'}
+                returnKeyType="search"
                 fetchDetails={true}
-                enableClearButton={true} 
+                enablePoweredByContainer={false}
+                enableClearButton={true}
+                debounce={300}
                 onPress={(data, details = null) => {
                     if (details) {
-                        onSelect({
+                        const selectedPlace = {
                             latitude: details.geometry.location.lat,
                             longitude: details.geometry.location.lng,
-                            address: data.description
-                        });
+                            address: data.description,
+                        };
+
+                        googlePlacesRef.current?.setAddressText(data.description);
+                        onSelect(selectedPlace);
                     }
                 }}
                 query={{
@@ -39,7 +53,7 @@ const LocationAutocomplete = ({ onSelect, placeholder, top = 40, defaultValue = 
                 styles={{
                     textInput: styles.textInput,
                     container: { flex: 0 },
-                    listView: styles.listView, 
+                    listView: styles.listView,
                 }}
             />
         </View>
@@ -51,7 +65,8 @@ const styles = StyleSheet.create({
         position: 'absolute',
         width: '90%',
         alignSelf: 'center',
-        zIndex: 2,
+        zIndex: 999,
+        elevation: 10,
     },
     textInput: {
         height: 50,
@@ -73,7 +88,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 4,
-    }
+    },
 });
 
 export default LocationAutocomplete;

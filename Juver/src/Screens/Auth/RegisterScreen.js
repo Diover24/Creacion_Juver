@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { View, Button, Alert, StyleSheet, ScrollView } from 'react-native';
-import { authService, dbService } from '../../services/database';
+import { View, Button, Alert, StyleSheet, ScrollView, Text, TouchableOpacity, Image, Modal, FlatList } from 'react-native';
+import { launchImageLibrary } from 'react-native-image-picker';
 
+import { authService, dbService } from '../../services/database';
 import { isEmpty, isValidEmail, isValidNameLength, isValidPhone, isStrongPassword } from '../../utils/validations';
 import CustomInput from '../../components/CustomInput';
 
-const RegisterScreen = ({ navigation }) => {
+const RegisterScreen = ({ }) => {
+    const [photoUrl, setPhotoUrl] = useState('');
     const [fullName, setFullName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [gender, setGender] = useState('');
@@ -13,17 +15,30 @@ const RegisterScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    const [isGenderModalVisible, setIsGenderModalVisible] = useState(false);
+    const genderOptions = ['Masculino', 'Femenino', 'No binario', 'Prefiero no decirlo'];
+
     const clearForm = () => {
+        setPhotoUrl('');
         setFullName('');
-        setEmail('');
+        setPhoneNumber('');
         setGender('');
         setLanguage('');
+        setEmail('');
         setPassword('');
-        setPhoneNumber('');
+    };
+
+    const handleSelectPhoto = () => {
+        const options = { mediaType: 'photo', quality: 0.7 };
+        launchImageLibrary(options, (response) => {
+            if (response.assets && response.assets.length > 0) {
+                setPhotoUrl(response.assets[0].uri);
+            }
+        });
     };
 
     const handleRegister = async () => {
-        if (isEmpty(fullName) || isEmpty(phoneNumber) || isEmpty(email) || isEmpty(password)) {
+        if (isEmpty(photoUrl) || isEmpty(fullName) || isEmpty(phoneNumber) || isEmpty(email) || isEmpty(password) || isEmpty(gender) || isEmpty(language)) {
             Alert.alert('Error', 'Todos los campos son obligatorios. No pueden estar vacíos.');
             return;
         }
@@ -58,19 +73,14 @@ const RegisterScreen = ({ navigation }) => {
                 gender: gender,
                 language: language,
                 email: email,
-                photoUrl: '',
+                photoUrl: photoUrl,
                 createdAt: new Date(),
             });
+
             clearForm();
             Alert.alert(
                 '¡Éxito!',
-                '¡Usuario creado con éxito!',
-                [
-                    {
-                        text: 'OK',
-                        onPress: () => navigation.navigate('Home')
-                    }
-                ]
+                '¡Usuario creado con éxito!'
             );
         } catch (error) {
             if (error.code === 'auth/email-already-in-use') {
@@ -87,43 +97,92 @@ const RegisterScreen = ({ navigation }) => {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+            <TouchableOpacity style={styles.photoPicker} onPress={handleSelectPhoto}>
+                {photoUrl ? (
+                    <Image source={{ uri: photoUrl }} style={styles.avatar} />
+                ) : (
+                    <View style={styles.avatarPlaceholder}>
+                        <Text style={styles.avatarText}>Añadir Foto</Text>
+                    </View>
+                )}
+            </TouchableOpacity>
             <CustomInput
-                placeholder="Full Name"
+                placeholder="Nombre Completo"
                 value={fullName}
                 onChangeText={setFullName}
+                maxLength={50}
             />
             <CustomInput
-                placeholder="Phone Number"
+                placeholder="Número de Celular (10 dígitos)"
                 value={phoneNumber}
                 keyboardType="numeric"
                 onChangeText={setPhoneNumber}
+                maxLength={10}
             />
+            <TouchableOpacity style={styles.dropdown} onPress={() => setIsGenderModalVisible(true)}>
+                <Text style={gender ? styles.dropdownText : styles.placeholderText}>
+                    {gender ? `Género: ${gender}` : 'Selecciona tu Género'}
+                </Text>
+            </TouchableOpacity>
             <CustomInput
-                placeholder="Gender (e.g., Male/Female/Other)"
-                value={gender}
-                onChangeText={setGender}
-            />
-            <CustomInput
-                placeholder="Language (English/Spanish)"
-                value={language}
-                onChangeText={setLanguage}
-            />
-            <CustomInput
-                placeholder="Email"
+                placeholder="Correo Electrónico"
                 value={email}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 onChangeText={setEmail}
             />
             <CustomInput
-                placeholder="Password"
+                placeholder="Contraseña"
                 value={password}
                 isPassword
                 onChangeText={setPassword}
             />
+            <Text style={styles.labelSection}>Idioma de preferencia:</Text>
+            <View style={styles.languageContainer}>
+                <TouchableOpacity
+                    style={[styles.langButton, language === 'Español' && styles.langButtonActive]}
+                    onPress={() => setLanguage('Español')}
+                >
+                    <Text style={[styles.langText, language === 'Español' && styles.langTextActive]}>Español</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={[styles.langButton, language === 'Inglés' && styles.langButtonActive]}
+                    onPress={() => setLanguage('Inglés')}
+                >
+                    <Text style={[styles.langText, language === 'Inglés' && styles.langTextActive]}>Inglés</Text>
+                </TouchableOpacity>
+            </View>
 
             <Button title="Register" onPress={handleRegister} />
+            <Modal
+                visible={isGenderModalVisible}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setIsGenderModalVisible(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>Selecciona tu Género</Text>
+                        <FlatList
+                            data={genderOptions}
+                            keyExtractor={(item) => item}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    style={styles.modalItem}
+                                    onPress={() => {
+                                        setGender(item);
+                                        setIsGenderModalVisible(false);
+                                    }}
+                                >
+                                    <Text style={styles.modalItemText}>{item}</Text>
+                                </TouchableOpacity>
+                            )}
+                        />
+                        <Button title="Cerrar" color="red" onPress={() => setIsGenderModalVisible(false)} />
+                    </View>
+                </View>
+            </Modal>
         </ScrollView>
     );
 };
@@ -134,7 +193,110 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 20,
         backgroundColor: '#fff'
-    }
+    },
+    photoPicker: {
+        alignSelf: 'center',
+        marginBottom: 20,
+    },
+    avatarPlaceholder: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        backgroundColor: '#e1e4e8',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#ccc'
+    },
+    avatar: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+    },
+    avatarText: {
+        color: '#586069',
+        fontSize: 14,
+    },
+    dropdown: {
+        height: 50,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 8,
+        justifyContent: 'center',
+        paddingHorizontal: 10,
+        marginBottom: 15,
+        backgroundColor: '#fafafa',
+    },
+    dropdownText: {
+        fontSize: 16,
+        color: '#000',
+    },
+    placeholderText: {
+        fontSize: 16,
+        color: '#999',
+    },
+    labelSection: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        color: '#333'
+    },
+    languageContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 25,
+    },
+    langButton: {
+        flex: 1,
+        height: 45,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginHorizontal: 5,
+        backgroundColor: '#fafafa'
+    },
+    langButtonActive: {
+        backgroundColor: '#2196F3',
+        borderColor: '#2196F3',
+    },
+    langText: {
+        fontSize: 16,
+        color: '#333',
+    },
+    langTextActive: {
+        color: '#fff',
+        fontWeight: 'bold',
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        width: '80%',
+        backgroundColor: '#fff',
+        borderRadius: 12,
+        padding: 20,
+        elevation: 5,
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 15,
+        textAlign: 'center',
+    },
+    modalItem: {
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#eee',
+    },
+    modalItemText: {
+        fontSize: 16,
+        textAlign: 'center',
+    },
 });
 
 export default RegisterScreen;
