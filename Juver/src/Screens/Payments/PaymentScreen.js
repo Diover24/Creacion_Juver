@@ -173,10 +173,10 @@ const PaymentScreen = ({ route, navigation }) => {
                 'Tu pago fue procesado correctamente.',
                 [
                     {
-                        text: 'OK',
+                        text: 'Ver recibo',
                         onPress: () => {
-                            navigation.navigate('Inicio', {
-                                clearTrip: Date.now(),
+                            navigation.navigate('Recibo', {
+                                tripId,
                             });
                         },
                     },

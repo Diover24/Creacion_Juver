@@ -13,11 +13,11 @@ const TripHistoryScreen = () => {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const formatDate = (createdAt) => {
-        if (!createdAt) return 'Fecha no disponible';
+    const formatDate = (dateValue) => {
+        if (!dateValue) return 'Fecha no disponible';
 
         try {
-            const date = createdAt.toDate ? createdAt.toDate() : new Date(createdAt);
+            const date = dateValue.toDate ? dateValue.toDate() : new Date(dateValue);
 
             return date.toLocaleDateString('es-CO', {
                 year: 'numeric',
@@ -30,9 +30,35 @@ const TripHistoryScreen = () => {
     };
 
     const formatPrice = (price) => {
-        const value = price || 0;
+        return `$${Number(price || 0).toLocaleString('es-CO')}`;
+    };
 
-        return `$${value.toLocaleString('es-CO')}`;
+    const getStatusLabel = (status) => {
+        if (status === 'completed') return 'COMPLETADO';
+        if (status === 'cancelled') return 'CANCELADO';
+
+        return status?.toUpperCase() || 'SIN ESTADO';
+    };
+
+    const getStatusStyle = (status) => {
+        if (status === 'completed') {
+            return {
+                backgroundColor: '#E8F5E9',
+                color: '#2E7D32',
+            };
+        }
+
+        if (status === 'cancelled') {
+            return {
+                backgroundColor: '#FFEBEE',
+                color: '#C62828',
+            };
+        }
+
+        return {
+            backgroundColor: '#EEEEEE',
+            color: '#555555',
+        };
     };
 
     useEffect(() => {
@@ -56,9 +82,13 @@ const TripHistoryScreen = () => {
                                 id: doc.id,
                                 ...data,
                                 createdAtFormatted: formatDate(data.createdAt),
+                                cancelledAtFormatted: formatDate(data.cancelledAt),
+                                finishedAtFormatted: formatDate(data.finishedAt),
                             };
                         })
-                        .filter((trip) => trip.status === 'completed')
+                        .filter((trip) =>
+                            ['completed', 'cancelled'].includes(trip.status)
+                        )
                         .sort((a, b) => {
                             const dateA = a.createdAt?.toDate
                                 ? a.createdAt.toDate()
@@ -84,11 +114,26 @@ const TripHistoryScreen = () => {
     }, []);
 
     const renderTripItem = ({ item }) => {
+        const statusStyle = getStatusStyle(item.status);
+        const isCancelled = item.status === 'cancelled';
+        const isCompleted = item.status === 'completed';
+
         return (
             <View style={styles.tripCard}>
                 <View style={styles.cardHeader}>
                     <Text style={styles.date}>{item.createdAtFormatted}</Text>
-                    <Text style={styles.status}>{item.status?.toUpperCase()}</Text>
+
+                    <Text
+                        style={[
+                            styles.status,
+                            {
+                                backgroundColor: statusStyle.backgroundColor,
+                                color: statusStyle.color,
+                            },
+                        ]}
+                    >
+                        {getStatusLabel(item.status)}
+                    </Text>
                 </View>
 
                 <View style={styles.infoBlock}>
@@ -126,19 +171,61 @@ const TripHistoryScreen = () => {
                     </View>
 
                     <View style={styles.column}>
-                        <Text style={styles.label}>Conductor</Text>
+                        <Text style={styles.label}>Placa</Text>
                         <Text style={styles.value}>
-                            {item.driver?.name || 'No registrado'}
+                            {item.driver?.licensePlate || 'No registrada'}
                         </Text>
                     </View>
                 </View>
-
-                <View style={styles.priceContainer}>
-                    <Text style={styles.priceLabel}>Total pagado</Text>
-                    <Text style={styles.price}>
-                        {formatPrice(item.vehicle?.price)}
+                <View style={styles.column}>
+                    <Text style={styles.label}>Conductor</Text>
+                    <Text style={styles.value}>
+                        {item.driver?.name || 'No asignado'}
                     </Text>
                 </View>
+
+                {isCompleted && (
+                    <>
+                        <View style={styles.priceContainer}>
+                            <Text style={styles.priceLabel}>Total pagado</Text>
+                            <Text style={styles.price}>
+                                {formatPrice(item.payment?.amount || item.vehicle?.price)}
+                            </Text>
+                        </View>
+
+                        <View style={styles.paymentInfo}>
+                            <Text style={styles.label}>Estado del pago</Text>
+                            <Text style={styles.value}>
+                                {item.paymentStatus === 'paid' ? 'Pagado' : 'No registrado'}
+                            </Text>
+                        </View>
+
+                        {item.rating?.stars && (
+                            <View style={styles.paymentInfo}>
+                                <Text style={styles.label}>Calificación</Text>
+                                <Text style={styles.rating}>
+                                    {'★'.repeat(item.rating.stars)}
+                                    {'☆'.repeat(5 - item.rating.stars)}
+                                </Text>
+
+                                {item.rating?.comment ? (
+                                    <Text style={styles.comment}>
+                                        {item.rating.comment}
+                                    </Text>
+                                ) : null}
+                            </View>
+                        )}
+                    </>
+                )}
+
+                {isCancelled && (
+                    <View style={styles.cancelledBox}>
+                        <Text style={styles.cancelledTitle}>Viaje cancelado</Text>
+                        <Text style={styles.cancelledText}>
+                            Este viaje fue cancelado y no generó cobro.
+                        </Text>
+                    </View>
+                )}
             </View>
         );
     };
@@ -168,9 +255,9 @@ const TripHistoryScreen = () => {
                 }
                 ListEmptyComponent={
                     <View style={styles.emptyContainer}>
-                        <Text style={styles.emptyTitle}>No tienes viajes finalizados</Text>
+                        <Text style={styles.emptyTitle}>No tienes viajes registrados</Text>
                         <Text style={styles.emptyText}>
-                            Cuando completes un viaje, aparecerá aquí.
+                            Cuando completes o canceles un viaje, aparecerá aquí.
                         </Text>
                     </View>
                 }
@@ -236,13 +323,12 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     status: {
-        backgroundColor: '#E8F5E9',
-        color: '#2E7D32',
         fontSize: 11,
         fontWeight: 'bold',
         paddingHorizontal: 10,
         paddingVertical: 4,
         borderRadius: 12,
+        overflow: 'hidden',
     },
     infoBlock: {
         marginBottom: 10,
@@ -285,6 +371,35 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         color: '#2196F3',
+    },
+    paymentInfo: {
+        marginTop: 10,
+    },
+    rating: {
+        fontSize: 18,
+        color: '#FFC107',
+        fontWeight: 'bold',
+    },
+    comment: {
+        marginTop: 4,
+        color: '#555',
+        fontSize: 13,
+        fontStyle: 'italic',
+    },
+    cancelledBox: {
+        marginTop: 12,
+        padding: 12,
+        backgroundColor: '#FFEBEE',
+        borderRadius: 12,
+    },
+    cancelledTitle: {
+        color: '#C62828',
+        fontWeight: 'bold',
+        marginBottom: 4,
+    },
+    cancelledText: {
+        color: '#8A1C1C',
+        fontSize: 13,
     },
     emptyContainer: {
         alignItems: 'center',

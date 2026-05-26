@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from 'react';
-import { View, StyleSheet, Text, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, Alert, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -170,7 +170,14 @@ const HomeScreen = ({ navigation, route }) => {
             dispatch(setTripLoading(false));
         }
     };
-
+    const handleClearSearch = () => {
+        dispatch(setDestination(null));
+        dispatch(setTripInfo(null));
+        dispatch(setSelectedVehicle(null));
+        dispatch(setIsTripRequested(false));
+        dispatch(setTripNotes(''));
+        setMapResetKey((prevKey) => prevKey + 1);
+    };
     return (
         <View style={styles.container}>
             <LocationAutocomplete
@@ -232,6 +239,12 @@ const HomeScreen = ({ navigation, route }) => {
                             disabled={loading}
                         />
                     )}
+                    <TouchableOpacity
+                        style={styles.clearButton}
+                        onPress={handleClearSearch}
+                    >
+                        <Text style={styles.clearButtonText}>Cancelar búsqueda</Text>
+                    </TouchableOpacity>
                 </ScrollView>
             )}
         </View>
@@ -274,6 +287,20 @@ const styles = StyleSheet.create({
         color: '#333',
         marginBottom: 5,
     },
+    clearButton: {
+        marginTop: 12,
+        paddingVertical: 12,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: '#D32F2F',
+        alignItems: 'center',
+    },
+    clearButtonText: {
+        color: '#D32F2F',
+        fontWeight: 'bold',
+        fontSize: 15,
+    },
 });
+
 
 export default HomeScreen;

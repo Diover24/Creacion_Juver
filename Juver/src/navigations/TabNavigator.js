@@ -7,6 +7,7 @@ import ActiveTripScreen from '../Screens/Trips/ActiveTripScreen';
 import TripHistoryScreen from '../Screens/Trips/TripHistoryScreen';
 import ProfileScreen from '../Screens/Auth/ProfileScreen';
 import PaymentScreen from '../Screens/Payments/PaymentScreen';
+import ReceiptScreen from '../Screens/Payments/ReceiptScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -43,7 +44,8 @@ const TabNavigator = () => {
             <Tab.Screen name="Viaje Activo" component={ActiveTripScreen} />
             <Tab.Screen name="Historial" component={TripHistoryScreen} />
             <Tab.Screen name="Perfil" component={ProfileScreen} />
-            <Tab.Screen name="Pago" component={PaymentScreen} options={{ tabBarButton: () => null, }} />
+            <Tab.Screen name="Pago" component={PaymentScreen} options={{ tabBarButton: () => null, tabBarItemStyle: {display: 'none', }, }} />
+            <Tab.Screen name="Recibo" component={ReceiptScreen} options={{tabBarButton: () => null, tabBarItemStyle: {display: 'none', }, }}/>
         </Tab.Navigator>
     );
 
