@@ -15,8 +15,8 @@ export const calculateTripFare = (distanceInKm, timeInMinutes) => {
 
   const distanceCost = distanceInKm * PRICE_PER_KM;
   const timeCost = timeInMinutes * PRICE_PER_MINUTE;
-  
+
   const totalFare = BASE_FARE + distanceCost + timeCost;
-  
+
   return Math.round(totalFare);
 };

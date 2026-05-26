@@ -1,10 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator, ScrollView } from 'react-native';
+import {
+    View,
+    Text,
+    StyleSheet,
+    TouchableOpacity,
+    Image,
+    ActivityIndicator,
+    ScrollView,
+    Alert,
+} from 'react-native';
+
 import { authService, dbService } from '../../services/database';
+import { useAuth } from '../../hooks/useAuth';
 
 const ProfileScreen = () => {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const { logout } = useAuth();
 
     useEffect(() => {
         const currentUser = authService.currentUser;
@@ -13,6 +25,7 @@ const ProfileScreen = () => {
             setLoading(false);
             return;
         }
+
         const unsubscribe = dbService
             .collection('Users')
             .doc(currentUser.uid)
@@ -21,12 +34,13 @@ const ProfileScreen = () => {
                     if (documentSnapshot.exists) {
                         setUserData(documentSnapshot.data());
                     } else {
-                        console.log("El documento del usuario no existe en Firestore.");
+                        console.log('El documento del usuario no existe en Firestore.');
                     }
+
                     setLoading(false);
                 },
                 (error) => {
-                    console.error("Error al obtener el perfil:", error);
+                    console.error('Error al obtener el perfil:', error);
                     setLoading(false);
                 }
             );
@@ -34,10 +48,12 @@ const ProfileScreen = () => {
         return () => unsubscribe();
     }, []);
 
-    const handleLogout = () => {
-        authService.signOut().catch(error => {
-            console.error("Error al cerrar sesión:", error);
-        });
+    const handleLogout = async () => {
+        const result = await logout();
+
+        if (!result.success) {
+            Alert.alert('Error', 'No se pudo cerrar sesión.');
+        }
     };
 
     if (loading) {
@@ -50,8 +66,12 @@ const ProfileScreen = () => {
     }
 
     return (
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+        <ScrollView
+            style={styles.container}
+            contentContainerStyle={styles.contentContainer}
+        >
             <Text style={styles.title}>Perfil de Usuario</Text>
+
             <View style={styles.imageContainer}>
                 {userData?.photoUrl ? (
                     <Image source={{ uri: userData.photoUrl }} style={styles.avatar} />
@@ -61,32 +81,44 @@ const ProfileScreen = () => {
                     </View>
                 )}
             </View>
+
             <View style={styles.infoCard}>
                 <View style={styles.infoRow}>
                     <Text style={styles.label}>Nombre Completo:</Text>
-                    <Text style={styles.value}>{userData?.fullName || 'No registrado'}</Text>
+                    <Text style={styles.value}>
+                        {userData?.fullName || 'No registrado'}
+                    </Text>
                 </View>
 
                 <View style={styles.infoRow}>
                     <Text style={styles.label}>Número de Celular:</Text>
-                    <Text style={styles.value}>{userData?.phoneNumber || 'No registrado'}</Text>
+                    <Text style={styles.value}>
+                        {userData?.phoneNumber || 'No registrado'}
+                    </Text>
                 </View>
 
                 <View style={styles.infoRow}>
                     <Text style={styles.label}>Género:</Text>
-                    <Text style={styles.value}>{userData?.gender || 'No registrado'}</Text>
+                    <Text style={styles.value}>
+                        {userData?.gender || 'No registrado'}
+                    </Text>
                 </View>
 
                 <View style={styles.infoRow}>
                     <Text style={styles.label}>Correo Electrónico:</Text>
-                    <Text style={styles.value}>{userData?.email || authService.currentUser?.email}</Text>
+                    <Text style={styles.value}>
+                        {userData?.email || authService.currentUser?.email || 'No registrado'}
+                    </Text>
                 </View>
 
                 <View style={styles.infoRow}>
                     <Text style={styles.label}>Idioma de Preferencia:</Text>
-                    <Text style={styles.value}>{userData?.language || 'No registrado'}</Text>
+                    <Text style={styles.value}>
+                        {userData?.language || 'No registrado'}
+                    </Text>
                 </View>
             </View>
+
             <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                 <Text style={styles.buttonText}>Cerrar Sesión</Text>
             </TouchableOpacity>
@@ -186,7 +218,7 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold',
         fontSize: 16,
-    }
+    },
 });
 
 export default ProfileScreen;

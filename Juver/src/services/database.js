@@ -25,7 +25,7 @@ export const createTrip = async (tripData, categoryId) => {
             status: 'pending',
             createdAt: firestore.FieldValue.serverTimestamp(),
         });
-        
+
         setTimeout(async () => {
             const pool = DRIVERS_POOL[categoryId] || DRIVERS_POOL.economico;
             const randomDriver = pool[Math.floor(Math.random() * pool.length)];

@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import tripReducer from './slices/tripSlice';
 import userReducer from './slices/userSlice';
+import tripReducer from './slices/tripSlice';
+import paymentReducer from './slices/paymentSlice';
 
 export const store = configureStore({
     reducer: {
-        trip: tripReducer,
         user: userReducer,
+        trip: tripReducer,
+        payment: paymentReducer,
     },
 });

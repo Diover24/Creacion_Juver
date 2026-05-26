@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { View, Alert, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { authService } from '../../services/database';
+
+import { useAuth } from '../../hooks/useAuth';
 import { isEmpty, isValidEmail } from '../../utils/validations';
+
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
 
 const LoginScreen = ({ navigation }) => {
+    const { login, sendPasswordReset, loading } = useAuth();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -20,17 +24,25 @@ const LoginScreen = ({ navigation }) => {
             return;
         }
 
-        try {
-            await authService.signInWithEmailAndPassword(email, password);
-            setPassword('');
-        } catch (error) {
-            if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+        const result = await login(email.trim(), password);
+
+        if (!result.success) {
+            const errorCode = result.error?.code;
+
+            if (
+                errorCode === 'auth/user-not-found' ||
+                errorCode === 'auth/wrong-password' ||
+                errorCode === 'auth/invalid-credential'
+            ) {
                 Alert.alert('Error de Acceso', 'El correo o la contraseña son incorrectos.');
             } else {
                 Alert.alert('Error', 'Hubo un problema al iniciar sesión. Intenta más tarde.');
-                console.log("Login error: ", error);
             }
+
+            return;
         }
+
+        setPassword('');
     };
 
     const handleForgotPassword = async () => {
@@ -47,20 +59,27 @@ const LoginScreen = ({ navigation }) => {
             return;
         }
 
-        try {
-            await authService.sendPasswordResetEmail(email);
-            Alert.alert(
-                '¡Correo enviado!',
-                'Revisa tu bandeja de entrada (o la carpeta de Spam) para restablecer tu contraseña.'
-            );
-        } catch (error) {
-            if (error.code === 'auth/user-not-found') {
+        const result = await sendPasswordReset(email.trim());
+
+        if (!result.success) {
+            const errorCode = result.error?.code;
+
+            if (errorCode === 'auth/user-not-found') {
                 Alert.alert('Error', 'No hay ninguna cuenta registrada con este correo.');
             } else {
-                Alert.alert('Error', 'Hubo un problema al enviar el correo. Intenta de nuevo más tarde.');
-                console.log("Reset password error: ", error);
+                Alert.alert(
+                    'Error',
+                    'Hubo un problema al enviar el correo. Intenta de nuevo más tarde.'
+                );
             }
+
+            return;
         }
+
+        Alert.alert(
+            '¡Correo enviado!',
+            'Revisa tu bandeja de entrada o la carpeta de Spam para restablecer tu contraseña.'
+        );
     };
 
     return (
@@ -74,6 +93,7 @@ const LoginScreen = ({ navigation }) => {
                 value={email}
                 onChangeText={setEmail}
             />
+
             <CustomInput
                 placeholder="Password"
                 value={password}
@@ -81,14 +101,23 @@ const LoginScreen = ({ navigation }) => {
                 isPassword
             />
 
-            <CustomButton title="Entrar" onPress={handleLogin} />
+            <CustomButton
+                title={loading ? 'Ingresando...' : 'Entrar'}
+                onPress={handleLogin}
+            />
 
-            <TouchableOpacity style={styles.forgotPasswordButton} onPress={handleForgotPassword}>
-                <Text style={styles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
+            <TouchableOpacity
+                style={styles.forgotPasswordButton}
+                onPress={handleForgotPassword}
+            >
+                <Text style={styles.forgotPasswordText}>
+                    ¿Olvidaste tu contraseña?
+                </Text>
             </TouchableOpacity>
 
             <View style={styles.footer}>
                 <Text>¿No tienes cuenta? </Text>
+
                 <TouchableOpacity onPress={() => navigation.navigate('Register')}>
                     <Text style={styles.registerText}>Regístrate</Text>
                 </TouchableOpacity>
@@ -102,13 +131,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         padding: 20,
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
-        textAlign: 'center'
+        textAlign: 'center',
     },
     forgotPasswordButton: {
         marginTop: 15,
@@ -123,12 +152,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 30
+        marginTop: 30,
     },
     registerText: {
         color: '#007BFF',
         fontWeight: 'bold',
-    }
+    },
 });
 
 export default LoginScreen;

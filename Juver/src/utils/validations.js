@@ -73,3 +73,79 @@ export const isValidLanguage = (language) => {
   const validLanguages = ['Español', 'Inglés'];
   return validLanguages.includes(language);
 };
+
+/**
+ * Validates if the card holder name is not empty.
+ * @param {string} name
+ * @returns {boolean}
+ */
+export const isValidCardHolderName = (name) => {
+  return !isEmpty(name);
+};
+
+/**
+ * Cleans card number by removing spaces.
+ * @param {string} cardNumber
+ * @returns {string}
+ */
+export const cleanCardNumber = (cardNumber) => {
+  return String(cardNumber || '').replace(/\s/g, '');
+};
+
+/**
+ * Validates if a card number has between 13 and 16 numeric digits.
+ * @param {string} cardNumber
+ * @returns {boolean}
+ */
+export const isValidCardNumber = (cardNumber) => {
+  const cleanNumber = cleanCardNumber(cardNumber);
+  const cardRegex = /^[0-9]{13,16}$/;
+
+  return cardRegex.test(cleanNumber);
+};
+
+/**
+ * Validates if expiration date has MM/YY format and is not expired.
+ * @param {string} expirationDate
+ * @returns {boolean}
+ */
+export const isValidExpirationDate = (expirationDate) => {
+  if (isEmpty(expirationDate)) return false;
+
+  const expirationRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
+
+  if (!expirationRegex.test(expirationDate)) {
+    return false;
+  }
+
+  const [monthText, yearText] = expirationDate.split('/');
+
+  const expirationMonth = parseInt(monthText, 10);
+  const expirationYear = 2000 + parseInt(yearText, 10);
+
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth() + 1;
+  const currentYear = currentDate.getFullYear();
+
+  if (expirationYear < currentYear) {
+    return false;
+  }
+
+  if (expirationYear === currentYear && expirationMonth < currentMonth) {
+    return false;
+  }
+
+  return true;
+};
+
+/**
+ * Validates if CVV has 3 or 4 numeric digits.
+ * @param {string} cvv
+ * @returns {boolean}
+ */
+export const isValidCvv = (cvv) => {
+  const cleanCvv = String(cvv || '').replace(/\D/g, '');
+  const cvvRegex = /^[0-9]{3,4}$/;
+
+  return cvvRegex.test(cleanCvv);
+};

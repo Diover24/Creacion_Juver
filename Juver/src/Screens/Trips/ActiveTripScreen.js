@@ -18,14 +18,11 @@ const ActiveTripScreen = ({ route, navigation }) => {
     const hasHandledTripFinished = useRef(false);
 
     const cleanTripAndGoHome = () => {
-        dispatch(resetTrip());
+        const total = trip?.vehicle?.price || 0;
 
-        navigation.setParams({
-            tripId: undefined,
-        });
-
-        navigation.navigate('Inicio', {
-            clearTrip: Date.now(),
+        navigation.navigate('Pago', {
+            tripId,
+            amount: total,
         });
     };
 
@@ -37,7 +34,7 @@ const ActiveTripScreen = ({ route, navigation }) => {
             `El total a pagar es: $${total.toLocaleString()}`,
             [
                 {
-                    text: 'Finalizar viaje',
+                    text: 'Ir a pagar',
                     onPress: cleanTripAndGoHome,
                 },
             ],
@@ -65,7 +62,7 @@ const ActiveTripScreen = ({ route, navigation }) => {
                     if (documentSnapshot && documentSnapshot.exists) {
                         const tripData = documentSnapshot.data();
 
-                        if (tripData?.status === 'completed') {
+                        if (tripData?.status === 'payment_pending') {
                             setTrip(null);
                             setLoading(false);
 
@@ -104,7 +101,8 @@ const ActiveTripScreen = ({ route, navigation }) => {
             hasHandledTripFinished.current = true;
 
             await db.collection('trips').doc(tripId).update({
-                status: 'completed',
+                status: 'payment_pending',
+                paymentStatus: 'pending',
                 finishedAt: new Date(),
             });
 
