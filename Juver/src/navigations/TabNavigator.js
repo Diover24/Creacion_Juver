@@ -12,7 +12,6 @@ import ReceiptScreen from '../Screens/Payments/ReceiptScreen';
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
-
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -30,13 +29,21 @@ const TabNavigator = () => {
                     }
                     return <Ionicons name={iconName} size={size} color={color} />;
                 },
-                tabBarActiveTintColor: '#007BFF',
-                tabBarInactiveTintColor: 'gray',
                 tabBarStyle: {
-                    paddingBottom: 5,
-                    height: 60,
+                    height: 80,
+                    paddingTop: 6,
+                    paddingBottom: 20,
                     borderTopWidth: 1,
                     borderTopColor: '#E4E6E8',
+                    backgroundColor: '#FFFFFF',
+                },
+                tabBarLabelStyle: {
+                    fontSize: 11,
+                    marginTop: 2,
+                },
+                tabBarItemStyle: {
+                    justifyContent: 'center',
+                    alignItems: 'center',
                 },
             })}
         >
@@ -44,12 +51,18 @@ const TabNavigator = () => {
             <Tab.Screen name="Viaje Activo" component={ActiveTripScreen} />
             <Tab.Screen name="Historial" component={TripHistoryScreen} />
             <Tab.Screen name="Perfil" component={ProfileScreen} />
-            <Tab.Screen name="Pago" component={PaymentScreen} options={{ tabBarButton: () => null, tabBarItemStyle: {display: 'none', }, }} />
-            <Tab.Screen name="Recibo" component={ReceiptScreen} options={{tabBarButton: () => null, tabBarItemStyle: {display: 'none', }, }}/>
+            <Tab.Screen
+                name="Pago"
+                component={PaymentScreen}
+                options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }}
+            />
+            <Tab.Screen
+                name="Recibo"
+                component={ReceiptScreen}
+                options={{ tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }}
+            />
         </Tab.Navigator>
     );
-
 };
 
 export default TabNavigator;
-

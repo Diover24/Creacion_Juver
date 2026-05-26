@@ -1,4 +1,5 @@
 import 'react-native-gesture-handler';
+import { StatusBar } from 'react-native';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -10,6 +11,11 @@ const App = () => {
   return (
     <Provider store={store}>
       <SafeAreaProvider>
+        <StatusBar
+          barStyle="dark-content"
+          backgroundColor="#FFFFFF"
+          translucent={false}
+        />
         <AppNavigator />
       </SafeAreaProvider>
     </Provider>

@@ -66,10 +66,7 @@ const ProfileScreen = () => {
     }
 
     return (
-        <ScrollView
-            style={styles.container}
-            contentContainerStyle={styles.contentContainer}
-        >
+        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
             <Text style={styles.title}>Perfil de Usuario</Text>
 
             <View style={styles.imageContainer}>
@@ -85,23 +82,17 @@ const ProfileScreen = () => {
             <View style={styles.infoCard}>
                 <View style={styles.infoRow}>
                     <Text style={styles.label}>Nombre Completo:</Text>
-                    <Text style={styles.value}>
-                        {userData?.fullName || 'No registrado'}
-                    </Text>
+                    <Text style={styles.value}>{userData?.fullName || 'No registrado'}</Text>
                 </View>
 
                 <View style={styles.infoRow}>
                     <Text style={styles.label}>Número de Celular:</Text>
-                    <Text style={styles.value}>
-                        {userData?.phoneNumber || 'No registrado'}
-                    </Text>
+                    <Text style={styles.value}>{userData?.phoneNumber || 'No registrado'}</Text>
                 </View>
 
                 <View style={styles.infoRow}>
                     <Text style={styles.label}>Género:</Text>
-                    <Text style={styles.value}>
-                        {userData?.gender || 'No registrado'}
-                    </Text>
+                    <Text style={styles.value}>{userData?.gender || 'No registrado'}</Text>
                 </View>
 
                 <View style={styles.infoRow}>
@@ -113,9 +104,7 @@ const ProfileScreen = () => {
 
                 <View style={styles.infoRow}>
                     <Text style={styles.label}>Idioma de Preferencia:</Text>
-                    <Text style={styles.value}>
-                        {userData?.language || 'No registrado'}
-                    </Text>
+                    <Text style={styles.value}>{userData?.language || 'No registrado'}</Text>
                 </View>
             </View>
 

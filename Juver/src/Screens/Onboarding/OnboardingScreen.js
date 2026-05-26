@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import {
-    View,
-    Text,
-    StyleSheet,
-    TouchableOpacity,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const slides = [
@@ -12,7 +7,8 @@ const slides = [
         id: 1,
         icon: 'map',
         title: 'Viaja con Juver',
-        description: 'Solicita viajes de forma rápida, segura y sencilla desde tu ubicación actual.',
+        description:
+            'Solicita viajes de forma rápida, segura y sencilla desde tu ubicación actual.',
     },
     {
         id: 2,
@@ -64,10 +60,7 @@ const OnboardingScreen = ({ onFinish }) => {
                     {slides.map((slide, index) => (
                         <View
                             key={slide.id}
-                            style={[
-                                styles.dot,
-                                currentIndex === index && styles.activeDot,
-                            ]}
+                            style={[styles.dot, currentIndex === index && styles.activeDot]}
                         />
                     ))}
                 </View>

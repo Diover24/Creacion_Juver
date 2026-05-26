@@ -51,7 +51,12 @@ export const processPayment = async ({
         if (paymentType !== 'cash') {
             const cleanNumber = cleanCardNumber(cardData?.cardNumber);
 
-            if (!cardData?.cardHolderName || !cleanNumber || !cardData?.expirationDate || !cardData?.cvv) {
+            if (
+                !cardData?.cardHolderName ||
+                !cleanNumber ||
+                !cardData?.expirationDate ||
+                !cardData?.cvv
+            ) {
                 throw new Error('Missing card information.');
             }
 

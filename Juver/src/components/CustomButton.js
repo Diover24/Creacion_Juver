@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontSize: 16,
         fontWeight: 'bold',
-    }
+    },
 });
 
 export default CustomButton;

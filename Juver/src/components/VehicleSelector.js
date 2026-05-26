@@ -21,7 +21,7 @@ const VehicleSelector = ({ distance, duration, onSelect }) => {
             id: vehicle.id,
             name: vehicle.name,
             price: finalPrice,
-            multiplier: vehicle.multiplier
+            multiplier: vehicle.multiplier,
         });
     };
 
@@ -68,11 +68,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: 100,
         borderWidth: 2,
-        borderColor: 'transparent'
+        borderColor: 'transparent',
     },
     selectedCard: {
         backgroundColor: '#E3F2FD',
-        borderColor: '#2196F3'
+        borderColor: '#2196F3',
     },
     icon: { marginBottom: 5 },
     title: { fontWeight: 'bold', color: '#333' },

@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-    View,
-    Text,
-    FlatList,
-    StyleSheet,
-    ActivityIndicator,
-} from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
 
 import { dbService as db, authService } from '../../services/database';
 
@@ -86,9 +80,7 @@ const TripHistoryScreen = () => {
                                 finishedAtFormatted: formatDate(data.finishedAt),
                             };
                         })
-                        .filter((trip) =>
-                            ['completed', 'cancelled'].includes(trip.status)
-                        )
+                        .filter((trip) => ['completed', 'cancelled'].includes(trip.status))
                         .sort((a, b) => {
                             const dateA = a.createdAt?.toDate
                                 ? a.createdAt.toDate()
@@ -138,16 +130,12 @@ const TripHistoryScreen = () => {
 
                 <View style={styles.infoBlock}>
                     <Text style={styles.label}>Origen</Text>
-                    <Text style={styles.value}>
-                        {item.origin?.address || 'Ubicación actual'}
-                    </Text>
+                    <Text style={styles.value}>{item.origin?.address || 'Ubicación actual'}</Text>
                 </View>
 
                 <View style={styles.infoBlock}>
                     <Text style={styles.label}>Destino</Text>
-                    <Text style={styles.value}>
-                        {item.destination?.address || 'Sin dirección'}
-                    </Text>
+                    <Text style={styles.value}>{item.destination?.address || 'Sin dirección'}</Text>
                 </View>
 
                 <View style={styles.row}>
@@ -165,9 +153,7 @@ const TripHistoryScreen = () => {
                 <View style={styles.row}>
                     <View style={styles.column}>
                         <Text style={styles.label}>Vehículo</Text>
-                        <Text style={styles.value}>
-                            {item.vehicle?.type || 'No registrado'}
-                        </Text>
+                        <Text style={styles.value}>{item.vehicle?.type || 'No registrado'}</Text>
                     </View>
 
                     <View style={styles.column}>
@@ -179,9 +165,7 @@ const TripHistoryScreen = () => {
                 </View>
                 <View style={styles.column}>
                     <Text style={styles.label}>Conductor</Text>
-                    <Text style={styles.value}>
-                        {item.driver?.name || 'No asignado'}
-                    </Text>
+                    <Text style={styles.value}>{item.driver?.name || 'No asignado'}</Text>
                 </View>
 
                 {isCompleted && (
@@ -209,9 +193,7 @@ const TripHistoryScreen = () => {
                                 </Text>
 
                                 {item.rating?.comment ? (
-                                    <Text style={styles.comment}>
-                                        {item.rating.comment}
-                                    </Text>
+                                    <Text style={styles.comment}>{item.rating.comment}</Text>
                                 ) : null}
                             </View>
                         )}
@@ -249,9 +231,7 @@ const TripHistoryScreen = () => {
                 renderItem={renderTripItem}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={
-                    history.length === 0
-                        ? styles.emptyListContainer
-                        : styles.listContainer
+                    history.length === 0 ? styles.emptyListContainer : styles.listContainer
                 }
                 ListEmptyComponent={
                     <View style={styles.emptyContainer}>

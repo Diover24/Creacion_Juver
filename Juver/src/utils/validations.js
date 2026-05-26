@@ -4,7 +4,7 @@
  * @returns {boolean}
  */
 export const isEmpty = (value) => {
-  return !value || String(value).trim().length === 0;
+    return !value || String(value).trim().length === 0;
 };
 
 /**
@@ -13,10 +13,10 @@ export const isEmpty = (value) => {
  * @returns {boolean}
  */
 export const isValidEmail = (email) => {
-  if (isEmpty(email)) return false;
+    if (isEmpty(email)) return false;
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(String(email).trim());
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(String(email).trim());
 };
 
 /**
@@ -25,9 +25,9 @@ export const isValidEmail = (email) => {
  * @returns {boolean}
  */
 export const isValidNameLength = (name) => {
-  if (isEmpty(name)) return false;
+    if (isEmpty(name)) return false;
 
-  return String(name).trim().length <= 50;
+    return String(name).trim().length <= 50;
 };
 
 /**
@@ -36,10 +36,10 @@ export const isValidNameLength = (name) => {
  * @returns {boolean}
  */
 export const isValidPhone = (phone) => {
-  if (isEmpty(phone)) return false;
+    if (isEmpty(phone)) return false;
 
-  const phoneRegex = /^[0-9]{10}$/;
-  return phoneRegex.test(String(phone).trim());
+    const phoneRegex = /^[0-9]{10}$/;
+    return phoneRegex.test(String(phone).trim());
 };
 
 /**
@@ -49,9 +49,9 @@ export const isValidPhone = (phone) => {
  * @returns {boolean}
  */
 export const isStrongPassword = (password) => {
-  if (isEmpty(password)) return false;
+    if (isEmpty(password)) return false;
 
-  return String(password).length >= 6;
+    return String(password).length >= 6;
 };
 
 /**
@@ -60,8 +60,8 @@ export const isStrongPassword = (password) => {
  * @returns {boolean}
  */
 export const isValidGender = (gender) => {
-  const validGenders = ['Masculino', 'Femenino', 'No binario', 'Prefiero no decirlo'];
-  return validGenders.includes(gender);
+    const validGenders = ['Masculino', 'Femenino', 'No binario', 'Prefiero no decirlo'];
+    return validGenders.includes(gender);
 };
 
 /**
@@ -70,8 +70,8 @@ export const isValidGender = (gender) => {
  * @returns {boolean}
  */
 export const isValidLanguage = (language) => {
-  const validLanguages = ['Español', 'Inglés'];
-  return validLanguages.includes(language);
+    const validLanguages = ['Español', 'Inglés'];
+    return validLanguages.includes(language);
 };
 
 /**
@@ -80,7 +80,7 @@ export const isValidLanguage = (language) => {
  * @returns {boolean}
  */
 export const isValidCardHolderName = (name) => {
-  return !isEmpty(name);
+    return !isEmpty(name);
 };
 
 /**
@@ -89,7 +89,7 @@ export const isValidCardHolderName = (name) => {
  * @returns {string}
  */
 export const cleanCardNumber = (cardNumber) => {
-  return String(cardNumber || '').replace(/\s/g, '');
+    return String(cardNumber || '').replace(/\s/g, '');
 };
 
 /**
@@ -98,10 +98,10 @@ export const cleanCardNumber = (cardNumber) => {
  * @returns {boolean}
  */
 export const isValidCardNumber = (cardNumber) => {
-  const cleanNumber = cleanCardNumber(cardNumber);
-  const cardRegex = /^[0-9]{13,16}$/;
+    const cleanNumber = cleanCardNumber(cardNumber);
+    const cardRegex = /^[0-9]{13,16}$/;
 
-  return cardRegex.test(cleanNumber);
+    return cardRegex.test(cleanNumber);
 };
 
 /**
@@ -110,32 +110,32 @@ export const isValidCardNumber = (cardNumber) => {
  * @returns {boolean}
  */
 export const isValidExpirationDate = (expirationDate) => {
-  if (isEmpty(expirationDate)) return false;
+    if (isEmpty(expirationDate)) return false;
 
-  const expirationRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
+    const expirationRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
 
-  if (!expirationRegex.test(expirationDate)) {
-    return false;
-  }
+    if (!expirationRegex.test(expirationDate)) {
+        return false;
+    }
 
-  const [monthText, yearText] = expirationDate.split('/');
+    const [monthText, yearText] = expirationDate.split('/');
 
-  const expirationMonth = parseInt(monthText, 10);
-  const expirationYear = 2000 + parseInt(yearText, 10);
+    const expirationMonth = parseInt(monthText, 10);
+    const expirationYear = 2000 + parseInt(yearText, 10);
 
-  const currentDate = new Date();
-  const currentMonth = currentDate.getMonth() + 1;
-  const currentYear = currentDate.getFullYear();
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentYear = currentDate.getFullYear();
 
-  if (expirationYear < currentYear) {
-    return false;
-  }
+    if (expirationYear < currentYear) {
+        return false;
+    }
 
-  if (expirationYear === currentYear && expirationMonth < currentMonth) {
-    return false;
-  }
+    if (expirationYear === currentYear && expirationMonth < currentMonth) {
+        return false;
+    }
 
-  return true;
+    return true;
 };
 
 /**
@@ -144,8 +144,8 @@ export const isValidExpirationDate = (expirationDate) => {
  * @returns {boolean}
  */
 export const isValidCvv = (cvv) => {
-  const cleanCvv = String(cvv || '').replace(/\D/g, '');
-  const cvvRegex = /^[0-9]{3,4}$/;
+    const cleanCvv = String(cvv || '').replace(/\D/g, '');
+    const cvvRegex = /^[0-9]{3,4}$/;
 
-  return cvvRegex.test(cleanCvv);
+    return cvvRegex.test(cleanCvv);
 };

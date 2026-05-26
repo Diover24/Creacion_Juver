@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
     View,
     Text,
@@ -14,12 +15,21 @@ import { dbService as db } from '../../services/database';
 
 const ReceiptScreen = ({ route, navigation }) => {
     const tripId = route?.params?.tripId;
+    const receiptKey = route?.params?.receiptKey;
 
     const [trip, setTrip] = useState(null);
     const [loading, setLoading] = useState(true);
     const [rating, setRating] = useState(5);
     const [comment, setComment] = useState('');
     const [saving, setSaving] = useState(false);
+
+    useFocusEffect(
+        useCallback(() => {
+            setRating(5);
+            setComment('');
+            setSaving(false);
+        }, [tripId, receiptKey])
+    );
 
     useEffect(() => {
         if (!tripId) {
@@ -78,13 +88,16 @@ const ReceiptScreen = ({ route, navigation }) => {
         try {
             setSaving(true);
 
-            await db.collection('trips').doc(tripId).update({
-                rating: {
-                    stars: rating,
-                    comment: comment.trim(),
-                    createdAt: new Date(),
-                },
-            });
+            await db
+                .collection('trips')
+                .doc(tripId)
+                .update({
+                    rating: {
+                        stars: rating,
+                        comment: comment.trim(),
+                        createdAt: new Date(),
+                    },
+                });
 
             Alert.alert(
                 'Gracias',
@@ -93,6 +106,8 @@ const ReceiptScreen = ({ route, navigation }) => {
                     {
                         text: 'OK',
                         onPress: () => {
+                            setRating(5);
+                            setComment('');
                             navigation.navigate('Inicio', {
                                 clearTrip: Date.now(),
                             });
@@ -168,14 +183,10 @@ const ReceiptScreen = ({ route, navigation }) => {
                 <Text style={styles.sectionTitle}>Información del viaje</Text>
 
                 <Text style={styles.label}>Origen</Text>
-                <Text style={styles.value}>
-                    {trip.origin?.address || 'Ubicación actual'}
-                </Text>
+                <Text style={styles.value}>{trip.origin?.address || 'Ubicación actual'}</Text>
 
                 <Text style={styles.label}>Destino</Text>
-                <Text style={styles.value}>
-                    {trip.destination?.address || 'Sin dirección'}
-                </Text>
+                <Text style={styles.value}>{trip.destination?.address || 'Sin dirección'}</Text>
 
                 <View style={styles.doubleRow}>
                     <View style={styles.column}>
@@ -192,21 +203,18 @@ const ReceiptScreen = ({ route, navigation }) => {
                 <View style={styles.doubleRow}>
                     <View style={styles.column}>
                         <Text style={styles.label}>Vehículo</Text>
-                        <Text style={styles.value}>
-                            {trip.vehicle?.type || 'No registrado'}
-                        </Text>
+                        <Text style={styles.value}>{trip.vehicle?.type || 'No registrado'}</Text>
                     </View>
 
                     <View style={styles.column}>
                         <Text style={styles.label}>Conductor</Text>
-                        <Text style={styles.value}>
-                            {trip.driver?.name || 'No registrado'}
-                        </Text>
+                        <Text style={styles.value}>{trip.driver?.name || 'No registrado'}</Text>
                     </View>
-                    <Text style={styles.label}>Placa</Text>
-                    <Text style={styles.value}>
-                        {trip.driver?.licensePlate || 'No registrada'}
-                    </Text>
+                    <View style={styles.column}>
+                        <Text style={styles.label}>Placa</Text>
+                        <Text style={styles.value}>{trip.driver?.licensePlate || 'No registrada'}</Text>
+
+                    </View>
                 </View>
             </View>
 
@@ -215,13 +223,8 @@ const ReceiptScreen = ({ route, navigation }) => {
 
                 <View style={styles.starsContainer}>
                     {[1, 2, 3, 4, 5].map((star) => (
-                        <TouchableOpacity
-                            key={star}
-                            onPress={() => setRating(star)}
-                        >
-                            <Text style={styles.star}>
-                                {star <= rating ? '★' : '☆'}
-                            </Text>
+                        <TouchableOpacity key={star} onPress={() => setRating(star)}>
+                            <Text style={styles.star}>{star <= rating ? '★' : '☆'}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>

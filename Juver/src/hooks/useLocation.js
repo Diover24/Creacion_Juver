@@ -26,7 +26,6 @@ export const useLocation = () => {
             );
             const isGranted = granted === PermissionsAndroid.RESULTS.GRANTED;
             isGranted ? fetchCurrentPosition() : setErrorMsg('Permiso de ubicación denegado');
-
         } catch (err) {
             setErrorMsg(err.message);
         }

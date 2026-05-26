@@ -3,13 +3,13 @@ import firestore from '@react-native-firebase/firestore';
 
 import { DRIVERS_POOL } from '../utils/driversPool';
 /**
- * 
+ *
  * Used for user registration, login, and session management.
  */
 export const authService = auth();
 
 /**
- * 
+ *
  * Used as the primary non-relational database for storing user profiles and trips.
  */
 export const dbService = firestore();
@@ -31,14 +31,13 @@ export const createTrip = async (tripData, categoryId) => {
             const randomDriver = pool[Math.floor(Math.random() * pool.length)];
             await docRef.update({
                 driver: randomDriver,
-                status: 'accepted'
+                status: 'accepted',
             });
         }, 5000);
 
         return docRef.id;
-
     } catch (error) {
-        console.error("Error saving trip to Firestore: ", error);
+        console.error('Error saving trip to Firestore: ', error);
         throw error;
     }
 };

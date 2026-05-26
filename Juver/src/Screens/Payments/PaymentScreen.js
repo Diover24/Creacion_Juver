@@ -33,14 +33,13 @@ import { resetTrip } from '../../store/slices/tripSlice';
 const PaymentScreen = ({ route, navigation }) => {
     const dispatch = useDispatch();
 
-    const {
-        selectedProvider,
-        selectedPaymentType,
-        loading,
-    } = useSelector((state) => state.payment);
+    const { selectedProvider, selectedPaymentType, loading } = useSelector(
+        (state) => state.payment
+    );
 
     const tripId = route?.params?.tripId;
     const amount = route?.params?.amount || 0;
+    const receiptKey = route?.params?.receiptKey;
 
     const [cardHolderName, setCardHolderName] = useState('');
     const [cardNumber, setCardNumber] = useState('');
@@ -101,7 +100,10 @@ const PaymentScreen = ({ route, navigation }) => {
         }
 
         if (!isValidExpirationDate(expirationDate)) {
-            Alert.alert('Atención', 'La fecha de vencimiento no es válida o la tarjeta ya está vencida.');
+            Alert.alert(
+                'Atención',
+                'La fecha de vencimiento no es válida o la tarjeta ya está vencida.'
+            );
             return false;
         }
 
@@ -142,24 +144,22 @@ const PaymentScreen = ({ route, navigation }) => {
                 provider: selectedProvider,
                 paymentType: selectedPaymentType,
                 amount,
-                cardData: selectedPaymentType === 'cash'
-                    ? null
-                    : {
-                        cardHolderName,
-                        cardNumber,
-                        expirationDate,
-                        cvv,
-                    },
+                cardData:
+                    selectedPaymentType === 'cash'
+                        ? null
+                        : {
+                              cardHolderName,
+                              cardNumber,
+                              expirationDate,
+                              cvv,
+                          },
             });
 
             if (!result.success) {
                 dispatch(setPaymentStatus('failed'));
                 dispatch(setPaymentError(result.error));
 
-                Alert.alert(
-                    'Pago rechazado',
-                    result.error || 'No se pudo procesar el pago.'
-                );
+                Alert.alert('Pago rechazado', result.error || 'No se pudo procesar el pago.');
 
                 return;
             }
@@ -177,6 +177,7 @@ const PaymentScreen = ({ route, navigation }) => {
                         onPress: () => {
                             navigation.navigate('Recibo', {
                                 tripId,
+                                receiptKey: Date.now(),
                             });
                         },
                     },
@@ -207,9 +208,7 @@ const PaymentScreen = ({ route, navigation }) => {
 
             <View style={styles.amountCard}>
                 <Text style={styles.amountLabel}>Total a pagar</Text>
-                <Text style={styles.amount}>
-                    ${amount.toLocaleString('es-CO')}
-                </Text>
+                <Text style={styles.amount}>${amount.toLocaleString('es-CO')}</Text>
             </View>
 
             <Text style={styles.sectionTitle}>Selecciona la pasarela</Text>
@@ -222,7 +221,6 @@ const PaymentScreen = ({ route, navigation }) => {
                 onPress={() => handleSelectProvider('stripe')}
             >
                 <Text style={styles.paymentTitle}>Stripe</Text>
-
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -233,14 +231,10 @@ const PaymentScreen = ({ route, navigation }) => {
                 onPress={() => handleSelectProvider('mercado_pago')}
             >
                 <Text style={styles.paymentTitle}>Mercado Pago</Text>
-
             </TouchableOpacity>
 
             <TouchableOpacity
-                style={[
-                    styles.paymentOption,
-                    selectedProvider === 'cash' && styles.selectedOption,
-                ]}
+                style={[styles.paymentOption, selectedProvider === 'cash' && styles.selectedOption]}
                 onPress={() => handleSelectProvider('cash')}
             >
                 <Text style={styles.paymentTitle}>Efectivo</Text>
@@ -338,8 +332,6 @@ const PaymentScreen = ({ route, navigation }) => {
                     </Text>
                 )}
             </TouchableOpacity>
-
-
         </ScrollView>
     );
 };

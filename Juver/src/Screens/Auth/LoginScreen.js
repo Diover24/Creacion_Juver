@@ -101,18 +101,10 @@ const LoginScreen = ({ navigation }) => {
                 isPassword
             />
 
-            <CustomButton
-                title={loading ? 'Ingresando...' : 'Entrar'}
-                onPress={handleLogin}
-            />
+            <CustomButton title={loading ? 'Ingresando...' : 'Entrar'} onPress={handleLogin} />
 
-            <TouchableOpacity
-                style={styles.forgotPasswordButton}
-                onPress={handleForgotPassword}
-            >
-                <Text style={styles.forgotPasswordText}>
-                    ¿Olvidaste tu contraseña?
-                </Text>
+            <TouchableOpacity style={styles.forgotPasswordButton} onPress={handleForgotPassword}>
+                <Text style={styles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
             </TouchableOpacity>
 
             <View style={styles.footer}>

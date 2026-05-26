@@ -2,7 +2,7 @@ import { GOOGLE_API_KEY } from '../utils/constants';
 
 export const getDistanceMatrix = async (origin, destination) => {
     if (!origin?.latitude || !destination?.latitude) {
-        console.warn("getDistanceMatrix: Coordenadas incompletas");
+        console.warn('getDistanceMatrix: Coordenadas incompletas');
         return null;
     }
     try {
@@ -14,7 +14,7 @@ export const getDistanceMatrix = async (origin, destination) => {
         const response = await fetch(url);
         const data = await response.json();
         if (!response.ok) {
-            console.log("Error HTTP:", response.status, await response.text());
+            console.log('Error HTTP:', response.status, await response.text());
         }
 
         if (data.status === 'OK') {
@@ -33,7 +33,7 @@ export const getDistanceMatrix = async (origin, destination) => {
             throw new Error(data.error_message || 'Error en la API');
         }
     } catch (error) {
-        console.error("Error en Distance Matrix:", error);
+        console.error('Error en Distance Matrix:', error);
         return null;
     }
 };

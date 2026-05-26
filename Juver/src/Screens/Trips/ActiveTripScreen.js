@@ -146,47 +146,42 @@ const ActiveTripScreen = ({ route, navigation }) => {
     const handleCancelTrip = () => {
         if (!tripId || !trip) return;
 
-        Alert.alert(
-            'Cancelar viaje',
-            '¿Estás seguro de que deseas cancelar este viaje?',
-            [
-                {
-                    text: 'No',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Sí, cancelar',
-                    style: 'destructive',
-                    onPress: async () => {
-                        try {
-                            isCancellingTrip.current = true;
-                            hasHandledTripFinished.current = true;
-                            setTrip(null);
-                            setErrorMessage('');
-                            setLoading(false);
+        Alert.alert('Cancelar viaje', '¿Estás seguro de que deseas cancelar este viaje?', [
+            {
+                text: 'No',
+                style: 'cancel',
+            },
+            {
+                text: 'Sí, cancelar',
+                style: 'destructive',
+                onPress: async () => {
+                    try {
+                        isCancellingTrip.current = true;
+                        hasHandledTripFinished.current = true;
+                        setTrip(null);
+                        setErrorMessage('');
+                        setLoading(false);
 
-                            await db.collection('trips').doc(tripId).update({
-                                status: 'cancelled',
-                                cancelledAt: new Date(),
-                            });
-                            dispatch(resetTrip());
-                            navigation.setParams({
-                                tripId: undefined,
-                            });
-                            navigation.navigate('Inicio', {
-                                clearTrip: Date.now(),
-                            });
-
-                        } catch (error) {
-                            console.error('Error cancelling trip:', error);
-                            isCancellingTrip.current = false;
-                            hasHandledTripFinished.current = false;
-                            Alert.alert('Error', 'No se pudo cancelar el viaje.');
-                        }
-                    },
+                        await db.collection('trips').doc(tripId).update({
+                            status: 'cancelled',
+                            cancelledAt: new Date(),
+                        });
+                        dispatch(resetTrip());
+                        navigation.setParams({
+                            tripId: undefined,
+                        });
+                        navigation.navigate('Inicio', {
+                            clearTrip: Date.now(),
+                        });
+                    } catch (error) {
+                        console.error('Error cancelling trip:', error);
+                        isCancellingTrip.current = false;
+                        hasHandledTripFinished.current = false;
+                        Alert.alert('Error', 'No se pudo cancelar el viaje.');
+                    }
                 },
-            ]
-        );
+            },
+        ]);
     };
 
     if (loading) {
@@ -247,9 +242,7 @@ const ActiveTripScreen = ({ route, navigation }) => {
                         style={[
                             styles.statusBadge,
                             {
-                                backgroundColor: trip?.driver
-                                    ? '#E3F2FD'
-                                    : '#FFF3E0',
+                                backgroundColor: trip?.driver ? '#E3F2FD' : '#FFF3E0',
                             },
                         ]}
                     >
@@ -257,9 +250,7 @@ const ActiveTripScreen = ({ route, navigation }) => {
                             style={[
                                 styles.statusText,
                                 {
-                                    color: trip?.driver
-                                        ? '#1E88E5'
-                                        : '#FB8C00',
+                                    color: trip?.driver ? '#1E88E5' : '#FB8C00',
                                 },
                             ]}
                         >
@@ -275,16 +266,12 @@ const ActiveTripScreen = ({ route, navigation }) => {
                         <View style={styles.driverInfoRow}>
                             <View style={styles.avatarMini}>
                                 <Text style={styles.avatarMiniText}>
-                                    {trip.driver.name
-                                        ? trip.driver.name.charAt(0)
-                                        : '🚗'}
+                                    {trip.driver.name ? trip.driver.name.charAt(0) : '🚗'}
                                 </Text>
                             </View>
 
                             <View>
-                                <Text style={styles.driverName}>
-                                    {trip.driver.name}
-                                </Text>
+                                <Text style={styles.driverName}>{trip.driver.name}</Text>
 
                                 <Text style={styles.vehicleModel}>
                                     🚗 {trip.driver.vehicleModel || 'Vehículo estándar'}
@@ -304,10 +291,7 @@ const ActiveTripScreen = ({ route, navigation }) => {
                     </View>
                 )}
                 {canCancelTrip && (
-                    <TouchableOpacity
-                        style={styles.cancelButton}
-                        onPress={handleCancelTrip}
-                    >
+                    <TouchableOpacity style={styles.cancelButton} onPress={handleCancelTrip}>
                         <Text style={styles.cancelButtonText}>Cancelar viaje</Text>
                     </TouchableOpacity>
                 )}

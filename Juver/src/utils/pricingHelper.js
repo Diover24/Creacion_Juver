@@ -1,5 +1,3 @@
-
-
 const BASE_FARE = 3500;
 const PRICE_PER_KM = 1200;
 const PRICE_PER_MINUTE = 200;
@@ -11,12 +9,12 @@ const PRICE_PER_MINUTE = 200;
  * @returns {number} The calculated total fare rounded to the nearest integer.
  */
 export const calculateTripFare = (distanceInKm, timeInMinutes) => {
-  if (!distanceInKm || !timeInMinutes) return 0;
+    if (!distanceInKm || !timeInMinutes) return 0;
 
-  const distanceCost = distanceInKm * PRICE_PER_KM;
-  const timeCost = timeInMinutes * PRICE_PER_MINUTE;
+    const distanceCost = distanceInKm * PRICE_PER_KM;
+    const timeCost = timeInMinutes * PRICE_PER_MINUTE;
 
-  const totalFare = BASE_FARE + distanceCost + timeCost;
+    const totalFare = BASE_FARE + distanceCost + timeCost;
 
-  return Math.round(totalFare);
+    return Math.round(totalFare);
 };

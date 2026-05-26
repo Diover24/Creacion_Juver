@@ -1,12 +1,29 @@
 import React, { useState } from 'react';
-import { View, Button, Alert, StyleSheet, ScrollView, Text, TouchableOpacity, Image, Modal, FlatList } from 'react-native';
+import {
+    View,
+    Button,
+    Alert,
+    StyleSheet,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    Image,
+    Modal,
+    FlatList,
+} from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 
 import { authService, dbService } from '../../services/database';
-import { isEmpty, isValidEmail, isValidNameLength, isValidPhone, isStrongPassword } from '../../utils/validations';
+import {
+    isEmpty,
+    isValidEmail,
+    isValidNameLength,
+    isValidPhone,
+    isStrongPassword,
+} from '../../utils/validations';
 import CustomInput from '../../components/CustomInput';
 
-const RegisterScreen = ({ }) => {
+const RegisterScreen = ({}) => {
     const [photoUrl, setPhotoUrl] = useState('');
     const [fullName, setFullName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -38,7 +55,15 @@ const RegisterScreen = ({ }) => {
     };
 
     const handleRegister = async () => {
-        if (isEmpty(photoUrl) || isEmpty(fullName) || isEmpty(phoneNumber) || isEmpty(email) || isEmpty(password) || isEmpty(gender) || isEmpty(language)) {
+        if (
+            isEmpty(photoUrl) ||
+            isEmpty(fullName) ||
+            isEmpty(phoneNumber) ||
+            isEmpty(email) ||
+            isEmpty(password) ||
+            isEmpty(gender) ||
+            isEmpty(language)
+        ) {
             Alert.alert('Error', 'Todos los campos son obligatorios. No pueden estar vacíos.');
             return;
         }
@@ -54,7 +79,10 @@ const RegisterScreen = ({ }) => {
         }
 
         if (!isValidPhone(phoneNumber)) {
-            Alert.alert('Error', 'El número de teléfono debe tener exactamente 10 dígitos numéricos.');
+            Alert.alert(
+                'Error',
+                'El número de teléfono debe tener exactamente 10 dígitos numéricos.'
+            );
             return;
         }
 
@@ -64,7 +92,10 @@ const RegisterScreen = ({ }) => {
         }
 
         try {
-            const userCredential = await authService.createUserWithEmailAndPassword(email, password);
+            const userCredential = await authService.createUserWithEmailAndPassword(
+                email,
+                password
+            );
             const uid = userCredential.user.uid;
 
             await dbService.collection('Users').doc(uid).set({
@@ -78,20 +109,26 @@ const RegisterScreen = ({ }) => {
             });
 
             clearForm();
-            Alert.alert(
-                '¡Éxito!',
-                '¡Usuario creado con éxito!'
-            );
+            Alert.alert('¡Éxito!', '¡Usuario creado con éxito!');
         } catch (error) {
             if (error.code === 'auth/email-already-in-use') {
-                Alert.alert('Error de Registro', 'Este correo electrónico ya está registrado. Intenta iniciar sesión.');
+                Alert.alert(
+                    'Error de Registro',
+                    'Este correo electrónico ya está registrado. Intenta iniciar sesión.'
+                );
             } else if (error.code === 'auth/weak-password') {
-                Alert.alert('Error de Registro', 'Tu contraseña es muy débil. Debe tener al menos 6 caracteres.');
+                Alert.alert(
+                    'Error de Registro',
+                    'Tu contraseña es muy débil. Debe tener al menos 6 caracteres.'
+                );
             } else if (error.code === 'auth/invalid-email') {
                 Alert.alert('Error de Registro', 'El formato del correo electrónico no es válido.');
             } else {
-                Alert.alert('Error', 'Hubo un problema al crear la cuenta. Intenta de nuevo más tarde.');
-                console.log("Registration error: ", error);
+                Alert.alert(
+                    'Error',
+                    'Hubo un problema al crear la cuenta. Intenta de nuevo más tarde.'
+                );
+                console.log('Registration error: ', error);
             }
         }
     };
@@ -144,13 +181,19 @@ const RegisterScreen = ({ }) => {
                     style={[styles.langButton, language === 'Español' && styles.langButtonActive]}
                     onPress={() => setLanguage('Español')}
                 >
-                    <Text style={[styles.langText, language === 'Español' && styles.langTextActive]}>Español</Text>
+                    <Text
+                        style={[styles.langText, language === 'Español' && styles.langTextActive]}
+                    >
+                        Español
+                    </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={[styles.langButton, language === 'Inglés' && styles.langButtonActive]}
                     onPress={() => setLanguage('Inglés')}
                 >
-                    <Text style={[styles.langText, language === 'Inglés' && styles.langTextActive]}>Inglés</Text>
+                    <Text style={[styles.langText, language === 'Inglés' && styles.langTextActive]}>
+                        Inglés
+                    </Text>
                 </TouchableOpacity>
             </View>
 
@@ -179,7 +222,11 @@ const RegisterScreen = ({ }) => {
                                 </TouchableOpacity>
                             )}
                         />
-                        <Button title="Cerrar" color="red" onPress={() => setIsGenderModalVisible(false)} />
+                        <Button
+                            title="Cerrar"
+                            color="red"
+                            onPress={() => setIsGenderModalVisible(false)}
+                        />
                     </View>
                 </View>
             </Modal>
@@ -192,7 +239,7 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         justifyContent: 'center',
         padding: 20,
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
     },
     photoPicker: {
         alignSelf: 'center',
@@ -206,7 +253,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: '#ccc'
+        borderColor: '#ccc',
     },
     avatar: {
         width: 100,
@@ -239,7 +286,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 10,
-        color: '#333'
+        color: '#333',
     },
     languageContainer: {
         flexDirection: 'row',
@@ -255,7 +302,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginHorizontal: 5,
-        backgroundColor: '#fafafa'
+        backgroundColor: '#fafafa',
     },
     langButtonActive: {
         backgroundColor: '#2196F3',

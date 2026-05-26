@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useState } from 'react';
-import { View, StyleSheet, Text, ScrollView, Alert, ActivityIndicator, TouchableOpacity } from 'react-native';
+import {View,StyleSheet,Text,ScrollView,Alert,ActivityIndicator,TouchableOpacity} from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -32,15 +32,8 @@ const HomeScreen = ({ navigation, route }) => {
 
     const [mapResetKey, setMapResetKey] = useState(0);
 
-    const {
-        origin,
-        destination,
-        tripInfo,
-        selectedVehicle,
-        isTripRequested,
-        tripNotes,
-        loading,
-    } = useSelector((state) => state.trip);
+    const { origin, destination, tripInfo, selectedVehicle, isTripRequested, tripNotes, loading } =
+        useSelector((state) => state.trip);
 
     const finalOrigin = origin || detectedLocation;
 
@@ -114,7 +107,8 @@ const HomeScreen = ({ navigation, route }) => {
             dispatch(setTripLoading(true));
             dispatch(setTripError(null));
 
-            const activeTripsSnapshot = await dbService.collection('trips')
+            const activeTripsSnapshot = await dbService
+                .collection('trips')
                 .where('userId', '==', user.uid)
                 .where('status', 'in', ['pending', 'accepted', 'in_progress'])
                 .get();
@@ -122,16 +116,13 @@ const HomeScreen = ({ navigation, route }) => {
             if (!activeTripsSnapshot.empty) {
                 const activeTripId = activeTripsSnapshot.docs[0].id;
 
-                Alert.alert(
-                    'Viaje en curso',
-                    'Ya tienes un viaje activo.',
-                    [
-                        {
-                            text: 'OK',
-                            onPress: () => navigation.navigate('Viaje Activo', { tripId: activeTripId }),
-                        },
-                    ]
-                );
+                Alert.alert('Viaje en curso', 'Ya tienes un viaje activo.', [
+                    {
+                        text: 'OK',
+                        onPress: () =>
+                            navigation.navigate('Viaje Activo', { tripId: activeTripId }),
+                    },
+                ]);
 
                 return;
             }
@@ -161,7 +152,6 @@ const HomeScreen = ({ navigation, route }) => {
             if (navigation && newTripId) {
                 navigation.navigate('Viaje Activo', { tripId: newTripId });
             }
-
         } catch (error) {
             console.error('Error al pedir viaje:', error);
             dispatch(setTripError('No pudimos completar tu solicitud.'));
@@ -233,16 +223,15 @@ const HomeScreen = ({ navigation, route }) => {
                             title={
                                 loading
                                     ? 'Solicitando viaje...'
-                                    : `Confirmar ${selectedVehicle.name} - $${selectedVehicle.price.toLocaleString()}`
+                                    : `Confirmar ${
+                                          selectedVehicle.name
+                                      } - $${selectedVehicle.price.toLocaleString()}`
                             }
                             onPress={handleRequestTrip}
                             disabled={loading}
                         />
                     )}
-                    <TouchableOpacity
-                        style={styles.clearButton}
-                        onPress={handleClearSearch}
-                    >
+                    <TouchableOpacity style={styles.clearButton} onPress={handleClearSearch}>
                         <Text style={styles.clearButtonText}>Cancelar búsqueda</Text>
                     </TouchableOpacity>
                 </ScrollView>
@@ -301,6 +290,5 @@ const styles = StyleSheet.create({
         fontSize: 15,
     },
 });
-
 
 export default HomeScreen;

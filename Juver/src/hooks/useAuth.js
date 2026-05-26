@@ -8,10 +8,7 @@ export const useAuth = () => {
         try {
             setLoading(true);
 
-            const userCredential = await authService.signInWithEmailAndPassword(
-                email,
-                password
-            );
+            const userCredential = await authService.signInWithEmailAndPassword(email, password);
 
             return {
                 success: true,

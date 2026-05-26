@@ -1,16 +1,31 @@
 # Juver - Mobile Transport Application
 
-Juver is a cross-platform mobile transportation application inspired by Uber, built with React Native CLI for Android and iOS. The app allows users to register, log in, search for destinations, view routes on a map, estimate fares, request trips, track an assigned driver, complete payments, and review trip history.
+Juver is a cross-platform mobile transportation application inspired by Uber, built with React Native CLI for Android and iOS. The app allows users to register, log in, search for destinations, view routes on a map, estimate fares, request trips, track an assigned driver, complete payments, review trip receipts, rate completed trips, and check trip history.
 
-This project integrates Firebase, Google Maps APIs, Redux Toolkit, React Navigation, and a simulated payment gateway prepared for Stripe and Mercado Pago integrations.
+This project integrates Firebase, Google Maps APIs, Redux Toolkit, React Navigation, AsyncStorage, and a simulated payment gateway prepared for Stripe and Mercado Pago integrations.
 
 ---
 
 ## Main Features
 
+### Onboarding Screen
+
+The application includes a welcome onboarding flow that introduces the main features of Juver.
+
+The onboarding explains:
+
+- Trip requests
+- Vehicle selection
+- Payment options
+- General app usage
+
+The onboarding is shown only the first time the user opens the app. This behavior is managed using AsyncStorage.
+
+---
+
 ### User Authentication and Profile
 
-The application includes user registration and profile management using Firebase Authentication and Firebase Firestore.
+The application includes user registration, login, password recovery, and profile management using Firebase Authentication and Firebase Firestore.
 
 User profile fields:
 
@@ -41,6 +56,7 @@ Features:
 - Origin selection
 - Destination selection
 - Location search limited to Colombia
+- Clear search option to reset the destination, route, vehicle, notes, and fare information
 
 ---
 
@@ -54,6 +70,7 @@ Features:
 - Destination marker
 - Route drawing between origin and destination
 - Automatic map adjustment based on selected coordinates
+- Map cleanup after cancelling a search, cancelling a trip, or completing a trip
 
 ---
 
@@ -104,9 +121,12 @@ Features:
 
 - Driver assignment based on selected vehicle category
 - Driver information display
+- Vehicle model display
+- Vehicle license plate display
 - Driver movement simulation on the map
 - Animated marker tracking
 - Trip status updates
+- Simulated notifications such as “Your driver is on the way”
 
 Trip states include:
 
@@ -115,6 +135,24 @@ Trip states include:
 - In progress
 - Payment pending
 - Completed
+- Cancelled
+
+---
+
+### Cancel Trip
+
+The active trip screen allows the user to cancel a trip before it is completed.
+
+The cancellation flow includes:
+
+- Confirmation alert before cancelling
+- Firestore trip status update to `cancelled`
+- Redux trip state cleanup
+- Active trip screen cleanup
+- Map and route cleanup
+- Cancelled trip registration in the history screen
+
+Cancelled trips do not generate payment charges.
 
 ---
 
@@ -152,11 +190,44 @@ Sensitive information such as the full card number, CVV, and expiration date is 
 
 ---
 
+### Trip Receipt
+
+After a successful payment, the app displays a trip receipt.
+
+The receipt includes:
+
+- Total paid
+- Payment provider
+- Payment type
+- Card brand and last four digits when applicable
+- Origin
+- Destination
+- Distance
+- Duration
+- Vehicle type
+- Driver name
+- Vehicle license plate
+
+---
+
+### Trip Rating
+
+After viewing the receipt, the user can rate the trip.
+
+The rating feature includes:
+
+- Star rating from 1 to 5
+- Optional written comment
+- Rating storage in Firebase Firestore
+- Rating display in trip history when available
+
+---
+
 ### Trip History
 
-The history screen displays completed trips.
+The history screen displays completed and cancelled trips.
 
-Each trip record includes:
+Each completed trip record includes:
 
 - Date
 - Origin
@@ -165,8 +236,20 @@ Each trip record includes:
 - Duration
 - Vehicle type
 - Driver
+- Vehicle license plate
 - Total cost
 - Payment status
+- Rating and optional comment
+
+Each cancelled trip record includes:
+
+- Date
+- Origin
+- Destination
+- Vehicle type
+- Driver if assigned
+- Cancelled status
+- Cancellation message
 
 ---
 
@@ -184,6 +267,7 @@ Redux is used to manage:
 - Selected vehicle
 - Trip notes
 - Payment status
+- Trip cleanup after cancelling or completing a flow
 
 ---
 
@@ -200,6 +284,9 @@ Navigation structure includes:
 - Trip history screen
 - Profile screen
 - Payment screen
+- Receipt screen
+
+The Payment and Receipt screens are accessible through navigation but hidden from the bottom tab bar.
 
 ---
 
@@ -220,6 +307,7 @@ Navigation structure includes:
 - React Native Maps Directions
 - React Native Vector Icons
 - React Native Image Picker
+- React Native AsyncStorage
 
 ---
 
@@ -249,8 +337,11 @@ Juver/
     │   │   └── RegisterScreen.js
     │   ├── Home/
     │   │   └── HomeScreen.js
+    │   ├── Onboarding/
+    │   │   └── OnboardingScreen.js
     │   ├── Payments/
-    │   │   └── PaymentScreen.js
+    │   │   ├── PaymentScreen.js
+    │   │   └── ReceiptScreen.js
     │   └── Trips/
     │       ├── ActiveTripScreen.js
     │       └── TripHistoryScreen.js
@@ -316,6 +407,8 @@ The app uses Firebase for:
 - User profile storage
 - Trip storage
 - Payment status storage
+- Trip rating storage
+- Trip history storage
 
 Required Firebase services:
 
@@ -363,6 +456,8 @@ No real money is charged.
 
 The payment simulation validates card information and updates the trip status in Firestore after successful payment.
 
+This structure is prepared to be replaced by a real payment integration using a secure backend and real payment provider APIs.
+
 ---
 
 ## Redux Store
@@ -398,6 +493,8 @@ Redux helps share important state between screens without passing props manually
 - Simulated payment gateway prepared for future real integration
 - User interface texts in Spanish
 - Code structure and naming mostly in English
+- Sensitive payment data protection
+- Map and state cleanup after completing, cancelling, or resetting flows
 
 ---
 

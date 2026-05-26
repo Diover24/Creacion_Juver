@@ -5,13 +5,23 @@ import MapViewDirections from 'react-native-maps-directions';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { GOOGLE_API_KEY } from '../utils/constants';
 
-const MapComponent = ({ origin, destination, isTripConfirmed, onRouteCalculated, driver, onTripFinished, onTripStarted }) => {
+const MapComponent = ({
+    origin,
+    destination,
+    isTripConfirmed,
+    onRouteCalculated,
+    driver,
+    onTripFinished,
+    onTripStarted,
+}) => {
     const mapRef = useRef(null);
     const isPreviewMode = isTripConfirmed === undefined;
 
     const [driverLocation, setDriverLocation] = useState(null);
     const [initialDriverLocation, setInitialDriverLocation] = useState(null);
-    const [tripStage, setTripStage] = useState(isPreviewMode ? 'preview' : 'waitingForConfirmation');
+    const [tripStage, setTripStage] = useState(
+        isPreviewMode ? 'preview' : 'waitingForConfirmation'
+    );
     const [routeCoordinates, setRouteCoordinates] = useState([]);
 
     useEffect(() => {
@@ -91,7 +101,11 @@ const MapComponent = ({ origin, destination, isTripConfirmed, onRouteCalculated,
                     longitudeDelta: 0.02,
                 }}
             >
-                <Marker coordinate={{ latitude: origin.latitude, longitude: origin.longitude }} title="Tu ubicación" pinColor="green">
+                <Marker
+                    coordinate={{ latitude: origin.latitude, longitude: origin.longitude }}
+                    title="Tu ubicación"
+                    pinColor="green"
+                >
                     <View style={[styles.customMarker, { backgroundColor: '#4CAF50' }]}>
                         <Ionicons name="person" size={20} color="white" />
                     </View>
@@ -101,7 +115,7 @@ const MapComponent = ({ origin, destination, isTripConfirmed, onRouteCalculated,
                     <Marker
                         coordinate={{
                             latitude: destination.latitude,
-                            longitude: destination.longitude
+                            longitude: destination.longitude,
                         }}
                         title="Destino"
                         pinColor="red"
@@ -113,7 +127,11 @@ const MapComponent = ({ origin, destination, isTripConfirmed, onRouteCalculated,
                 )}
 
                 {driverLocation && (
-                    <Marker coordinate={driverLocation} title={driver ? driver.name : "Conductor"} pinColor="blue">
+                    <Marker
+                        coordinate={driverLocation}
+                        title={driver ? driver.name : 'Conductor'}
+                        pinColor="blue"
+                    >
                         <View style={[styles.customMarker, { backgroundColor: '#2196F3' }]}>
                             <Ionicons name="car" size={20} color="white" />
                         </View>
@@ -153,10 +171,11 @@ const MapComponent = ({ origin, destination, isTripConfirmed, onRouteCalculated,
             {!isPreviewMode && (
                 <View style={styles.statusBadge}>
                     <Text style={styles.statusText}>
-                        {tripStage === 'waitingForConfirmation' && "⏳ Buscando la unidad más cercana..."}
-                        {tripStage === 'fetchingClient' && "🚗 Conductor en camino a recogerte..."}
-                        {tripStage === 'toDestination' && "✨ ¡Hacia tu destino!"}
-                        {tripStage === 'finished' && "🏁 Has llegado a tu destino."}
+                        {tripStage === 'waitingForConfirmation' &&
+                            '⏳ Buscando la unidad más cercana...'}
+                        {tripStage === 'fetchingClient' && '🚗 Conductor en camino a recogerte...'}
+                        {tripStage === 'toDestination' && '✨ ¡Hacia tu destino!'}
+                        {tripStage === 'finished' && '🏁 Has llegado a tu destino.'}
                     </Text>
                 </View>
             )}
@@ -167,14 +186,27 @@ const MapComponent = ({ origin, destination, isTripConfirmed, onRouteCalculated,
 const styles = StyleSheet.create({
     container: { flex: 1, width: '100%', overflow: 'hidden', borderRadius: 10 },
     map: { width: '100%', height: '100%' },
-    loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f0f0f0' },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#f0f0f0',
+    },
     loadingText: { color: '#666', fontSize: 16 },
     statusBadge: {
-        position: 'absolute', top: 15, left: 15, right: 15,
-        backgroundColor: 'rgba(255,255,255,0.95)', paddingVertical: 12,
-        borderRadius: 20, alignItems: 'center', elevation: 5,
-        shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25, shadowRadius: 3.84,
+        position: 'absolute',
+        top: 15,
+        left: 15,
+        right: 15,
+        backgroundColor: 'rgba(255,255,255,0.95)',
+        paddingVertical: 12,
+        borderRadius: 20,
+        alignItems: 'center',
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     },
     statusText: { fontWeight: 'bold', color: '#333', fontSize: 14 },
     customMarker: {
@@ -190,7 +222,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
-    }
+    },
 });
 
 export default MapComponent;

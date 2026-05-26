@@ -8,7 +8,7 @@ const CustomInput = ({
     isPassword,
     keyboardType,
     autoCapitalize,
-    label
+    label,
 }) => {
     const [isSecure, setIsSecure] = useState(isPassword);
 
@@ -33,9 +33,7 @@ const CustomInput = ({
                         style={styles.toggleButton}
                         onPress={() => setIsSecure(!isSecure)}
                     >
-                        <Text style={styles.toggleText}>
-                            {isSecure ? 'Mostrar' : 'Ocultar'}
-                        </Text>
+                        <Text style={styles.toggleText}>{isSecure ? 'Mostrar' : 'Ocultar'}</Text>
                     </TouchableOpacity>
                 )}
             </View>
@@ -76,7 +74,7 @@ const styles = StyleSheet.create({
         color: '#007BFF',
         fontWeight: '600',
         fontSize: 14,
-    }
+    },
 });
 
 export default CustomInput;
